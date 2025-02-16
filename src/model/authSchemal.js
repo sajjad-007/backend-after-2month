@@ -29,7 +29,7 @@ const userSchema  = new Schema({
         trim: true
     },
     phoneNumber:{
-        type: Number,
+        type: String,
         required: true,
         unique: true,
         trim: true

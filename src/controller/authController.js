@@ -4,18 +4,18 @@ const {userModel} = require("../model/authSchemal")
 const {emailRegex,passwordRegex, bdNumberRegex} = require("../utilitis/regexCheck")
 const { sendEmail } = require("../helpers/nodeMailer")
 const {otpGenerator} = require("../helpers/otpGenerator")
-const {passEncrypt} = require("../helpers/bcrypt")
+const {passEncrypt,bcryptPassCompare} = require("../helpers/bcrypt")
 
 
 const registration = async (req,res)=>{
     try {
         const {firstName,address1,email,phoneNumber,password,lastName} = req.body
         if (!firstName || !address1 || !email || !phoneNumber || !password) {
-            res.status(401)
+            return res.status(401)
                 .json(new errorResponse(401,"Missing credential",null,true))
         }
         if (!emailRegex(email) || !passwordRegex(password) || !bdNumberRegex(phoneNumber)) {
-            res.status(401)
+            return res.status(401)
                 .json(new errorResponse(401,"Check your email,phone number or password format!",null,true))
         }
         //hassing password
@@ -43,24 +43,42 @@ const registration = async (req,res)=>{
                 {new: true},
             ).select("-address1 -phoneNumber -lastName -otp -createdAt -updatedAt")
 
-            res.status(200)
+            return res.status(200)
             .json( new successResponse(200,'registration successfull',updateUserInfo,false))
         }
     } catch (error) {
-        res.status(500)
+        return res.status(500)
         .json(new errorResponse(404,"registration Unsuccessfull",null,error))
     }
 }
 
-const login = async (req,res) => {
+const login = async(req,res) => {
     try {
-        const {emailOrPhoneNumber,password} = req.body
-        console.log();
-        
-        res.status(200)
-        .json( new successResponse(200,'login successfull',null,false))
+        const {emailOrPhoneNumber, password} = req.body
+        if (!emailOrPhoneNumber || !password) {
+            return res.status(401)
+            .json(new errorResponse(401,"Dosen't Match credential",null,true))
+        }
+        //check if user is register using email or phoneNumber
+        const checkIsUserRegisterd = await userModel.findOne({
+            $or: [
+               
+                {email : emailOrPhoneNumber},
+                {phoneNumber : emailOrPhoneNumber},
+            ]
+        })
+        if (checkIsUserRegisterd) {
+            
+            const checkIsPasswordCorrect = await bcryptPassCompare(password,checkIsUserRegisterd.password)
+            if (!checkIsPasswordCorrect) {
+                return res.status(401)
+                .json(new errorResponse(401,"password is Incorrect",null,true))
+            }
+            return res.status(200)
+            .json(new successResponse(200,"login successful",null,null))
+        }
     } catch (error) {
-        res.status(500)
+        return res.status(500)
         .json(new errorResponse(500,"login Unsuccessfull",null,error))
     }
 }

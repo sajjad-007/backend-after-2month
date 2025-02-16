@@ -3,6 +3,8 @@ const {errorResponse} = require("../utilitis/errorResponse")
 const {userModel} = require("../model/authSchemal")
 const {emailRegex,passwordRegex, bdNumberRegex} = require("../utilitis/regexCheck")
 const { sendEmail } = require("../helpers/nodeMailer")
+const {otpGenerator} = require("../helpers/otpGenerator")
+const {passEncrypt} = require("../helpers/bcrypt")
 
 
 const registration = async (req,res)=>{
@@ -16,22 +18,51 @@ const registration = async (req,res)=>{
             res.status(401)
                 .json(new errorResponse(401,"Check your email,phone number or password format!",null,true))
         }
+        //hassing password
+        const hassPassword = await passEncrypt(password)
+        
+        //User info saved
         const saveUserInfo = await userModel.create({
-            firstName : firstName,
-            address1 : address1,
-            email : email,
-            phoneNumber: phoneNumber,
-            password: password,
+            firstName,
+            address1,
+            email,
+            phoneNumber,
+            password: hassPassword,
             ...(lastName && {lastName : lastName})
         })
+
+        //otp generator
+        const Otp = await otpGenerator()
+    
         //send email verification
-        await sendEmail()
-        res.status(200)
-        .json( new successResponse(200,'registration successfull',saveUserInfo,false))
+        const messageId = await sendEmail(firstName,Otp,email)
+        if (messageId) {
+            const updateUserInfo = await userModel.findOneAndUpdate(
+                {email: email},
+                {otp: Otp},
+                {new: true},
+            ).select("-address1 -phoneNumber -lastName -otp -createdAt -updatedAt")
+
+            res.status(200)
+            .json( new successResponse(200,'registration successfull',updateUserInfo,false))
+        }
     } catch (error) {
         res.status(500)
         .json(new errorResponse(404,"registration Unsuccessfull",null,error))
     }
 }
 
-module.exports = {registration}
+const login = async (req,res) => {
+    try {
+        const {emailOrPhoneNumber,password} = req.body
+        console.log();
+        
+        res.status(200)
+        .json( new successResponse(200,'login successfull',null,false))
+    } catch (error) {
+        res.status(500)
+        .json(new errorResponse(500,"login Unsuccessfull",null,error))
+    }
+}
+
+module.exports = {registration,login}

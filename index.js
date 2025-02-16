@@ -1,20 +1,11 @@
-const express = require('express')
-const app = express()
+const {app} = require("./app")
+const {databaseConnect} = require("./src/database/db")
+require('dotenv').config()
 
-app.use("*",(req,res)=>{
-  res.json({
-    name: "error",
-    message: "Invalid route"
-  })
-})
-app.get("/home/data",(req,res)=>{
-  res.json({
-    name: "sajjad",
-    message: "Hi, I am sajjad"
-  })
-})
 
-app.listen(7000,()=>{
-    console.log("server is running on port: 7000");
-    
+databaseConnect().then(()=>{
+  app.listen(process.env.PORT,()=>{
+      console.log("Server is running on port 7000");
+      
+  })
 })

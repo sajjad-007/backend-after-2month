@@ -1,1 +1,9 @@
 node_modules/
+
+#user name and password
+sajjadhossian987
+tIyEvISmmSap4hx8
+
+#connection string
+
+mongodb+srv://sajjadhossian987:<db_password>@cluster0.7usha.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

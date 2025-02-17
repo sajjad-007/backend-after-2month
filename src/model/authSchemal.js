@@ -44,7 +44,7 @@ const userSchema  = new Schema({
         type: String,
     },
     expireOtp: {
-        type: Number
+        type: String
     }
 },
     {timestamps: true}

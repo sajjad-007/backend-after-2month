@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 const sendEmail = async(firstName,otp, email)=>{
   if (!email) {
-    console.error("Error: Recipient email is missing!");
+    console.error("Recipient email is missing!");
     return;
   }
   try {

@@ -1,13 +1,13 @@
 const express = require("express")
 const _ = express.Router()
 const {category} = require("../controller/categoryController")
+const {upload} = require("../middleware/multer")
 
 
-_.route("/category").post((req,res,next)=>{
-    console.log(res.body = 'hello sajjad');
-    if (true) {
-        next()
-    }
-} ,category)
+_.route("/category").post(upload.fields(
+    [
+        {name: 'image',  maxCount: 1}
+    ]
+),category)
 
 module.exports = _

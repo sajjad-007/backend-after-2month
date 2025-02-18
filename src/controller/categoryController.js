@@ -3,6 +3,7 @@ const {successResponse} = require("../utilitis/successResponse")
 const {errorResponse} = require("../utilitis/errorResponse")
 const {uploadFileCloudinary} = require("../utilitis/cloudinary")
 
+//create categoroy
 const category = async(req,res) =>{
     try {
         const { name } = req.body
@@ -26,5 +27,19 @@ const category = async(req,res) =>{
         .json(new errorResponse(500,"Error from Category Controller",null,error))
     }
 }
+//get all category
+const getCategory = async(req,res)=>{
+    try {
+        
+        const findAllCategory = await categoryModel.find()
 
-module.exports = {category}
+        return res
+        .status(200)
+        .json(new successResponse(200,"Successfully found all category",findAllCategory,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"getCategory Unsuccessful",null,error))
+    }
+}
+
+module.exports = {category,getCategory}

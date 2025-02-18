@@ -1,7 +1,7 @@
 const {categoryModel} = require("../model/categorySchema")
 const {successResponse} = require("../utilitis/successResponse")
 const {errorResponse} = require("../utilitis/errorResponse")
-const {uploadFileCloudinary} = require("../utilitis/cloudinary")
+const {uploadFileCloudinary,deletFileCloudinary} = require("../utilitis/cloudinary")
 
 //create categoroy
 const category = async(req,res) =>{
@@ -30,9 +30,12 @@ const category = async(req,res) =>{
 //get all category
 const getCategory = async(req,res)=>{
     try {
-        
-        const findAllCategory = await categoryModel.find()
 
+        const findAllCategory = await categoryModel.find()
+        if(!findAllCategory){
+            return res.status(404)
+            .json(new errorResponse(404,"Couldn't find anything",null,error))
+        }
         return res
         .status(200)
         .json(new successResponse(200,"Successfully found all category",findAllCategory,false))
@@ -41,5 +44,50 @@ const getCategory = async(req,res)=>{
         .json(new errorResponse(500,"getCategory Unsuccessful",null,error))
     }
 }
+// update my category
 
-module.exports = {category,getCategory}
+const updateCategory =async(req,res) =>{
+    try {
+        
+        const { id } = req.params;
+        const {name} = req.body;
+        
+        const findCategory = await categoryModel.findById(id);
+        if (!findCategory) {
+            return res
+            .status(200)
+            .json(new successResponse(200,"Couldn't find anything",null,false))
+        }
+        const updateImgName = {}
+        if (name) {
+            updateImgName.name = name
+        }
+        
+        
+        if (req.files.image) {
+            const {path} = req.files?.image[0];
+
+            //old image( database) path destructuring
+            const findOldImg = await categoryModel.findOne({_id:id})
+            const findOldImgSplit = findOldImg.image.split('/')
+            const cloudinaryLocalPath = findOldImgSplit[findOldImgSplit.length -1].split('.')[0]
+            const itemDeleteCloudinary= await deletFileCloudinary(cloudinaryLocalPath)
+            
+            
+            
+        }
+        
+
+        
+
+
+        return res
+        .status(200)
+        .json(new successResponse(200,"Successfully updated my category",null,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"Update Category Unsuccessful",null,error))
+    }
+}
+
+module.exports = {category,getCategory,updateCategory}

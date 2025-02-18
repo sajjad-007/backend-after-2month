@@ -19,4 +19,11 @@ const uploadFileCloudinary = async(filepath)=>{
     }
 }
 
-module.exports = {uploadFileCloudinary}
+const deletFileCloudinary = async(filePath) =>{
+  return await cloudinary.api
+  .delete_resources([filePath], 
+    { type: 'upload' })
+    
+}
+
+module.exports = {uploadFileCloudinary, deletFileCloudinary}

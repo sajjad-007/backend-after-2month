@@ -91,5 +91,49 @@ const updateCategory =async(req,res) =>{
         .json(new errorResponse(500,"Update Category Unsuccessful",null,error))
     }
 }
+//get a single category
+const getSingleCategory =async(req,res) =>{
+    try {
+        
+        const { id } = req.params;
+        
+        const findSingleCategory = await categoryModel.findById(id);
+        if (!findSingleCategory) {
+            return res
+            .status(200)
+            .json(new successResponse(200,"Couldn't find anything",null,false))
+        }
+        
+        
+        return res
+        .status(200)
+        .json(new successResponse(200,"Successfully updated my category",findSingleCategory,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"Update Category Unsuccessful",null,error))
+    }
+}
+//delete category
+const deleteCategory =async(req,res) =>{
+    try {
+        
+        const { id } = req.params;
+        
+        const deleteSingleCategory = await categoryModel.findByIdAndDelete(id);
+        if (!deleteSingleCategory) {
+            return res
+            .status(200)
+            .json(new successResponse(200,"Couldn't find anything",null,false))
+        }
+        
+        
+        return res
+        .status(200)
+        .json(new successResponse(200,"Successfully updated my category",deleteSingleCategory,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"Update Category Unsuccessful",null,error))
+    }
+}
 
-module.exports = {category,getCategory,updateCategory}
+module.exports = {category,getCategory,updateCategory,getSingleCategory,deleteCategory}

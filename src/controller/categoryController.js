@@ -73,17 +73,19 @@ const updateCategory =async(req,res) =>{
             const cloudinaryLocalPath = findOldImgSplit[findOldImgSplit.length -1].split('.')[0]
             const itemDeleteCloudinary= await deletFileCloudinary(cloudinaryLocalPath)
             
-            
-            
+            if (itemDeleteCloudinary) {
+               const {secure_url} = await uploadFileCloudinary(path)
+               updateImgName.image = secure_url
+            }
         }
         
-
+        const uploadNewNameImgDb = await categoryModel.findByIdAndUpdate(
+            {_id:id},{...updateImgName},{new: true}
+        )
         
-
-
         return res
         .status(200)
-        .json(new successResponse(200,"Successfully updated my category",null,false))
+        .json(new successResponse(200,"Successfully updated my category",uploadNewNameImgDb,false))
     } catch (error) {
         return res.status(500)
         .json(new errorResponse(500,"Update Category Unsuccessful",null,error))

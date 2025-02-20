@@ -41,7 +41,7 @@ const getAllSubCategory = async(req,res) =>{
         const findAllSubCategory = await subCategoryModel.find({})
         if (!findAllSubCategory) {
             return res.status(401)
-            .json(new errorResponse(401,"Couldn't find sub category",null,error))
+            .json(new errorResponse(401,"Couldn't find sub category",null,true))
         }
         
         return res
@@ -53,4 +53,61 @@ const getAllSubCategory = async(req,res) =>{
     }
 }
 
-module.exports = {creatSubCategory,getAllSubCategory}
+//get a single sub category
+const getSingleSubCategory = async(req,res) =>{
+    try {
+        const {subid} = req.params
+        //populate('category) means main category refarance
+        const findSingleSubCategory = await subCategoryModel.findById(subid).populate('category')
+        if (!findSingleSubCategory) {
+            return res.status(401)
+            .json(new errorResponse(401,"Couldn't find sub category",null,true))
+        }
+        return res
+            .status(200)
+            .json(new successResponse(200,"Successfully found signle category",findSingleSubCategory,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"Error, from get single sub category failed!",null,error))
+    }
+}
+
+//update sub category
+const updateSubCategory = async(req,res) =>{
+    try {
+        const {subid} = req.params
+        // const {name,category} = req.body
+        const updateSingleSubCategory = await subCategoryModel.findByIdAndUpdate({_id:subid},{...req.body},{new:true})
+        if (!updateSingleSubCategory) {
+            return res.status(401)
+            .json(new errorResponse(401,"Couldn't update sub category",null,true))
+        }
+        return res
+            .status(200)
+            .json(new successResponse(200,"Successfully found update category",updateSingleSubCategory,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"Error, from Update sub category failed!",null,error))
+    }
+}
+//delete a sub category
+const deleteSubCategory = async(req,res) =>{
+    try {
+        const {subid} = req.params
+        // const {name,category} = req.body
+        const deleteSingleSubCategory = await subCategoryModel.findByIdAndDelete(subid)
+        if (!deleteSingleSubCategory) {
+            return res.status(401)
+            .json(new errorResponse(401,"Couldn't deleted sub category or don't exist this",null,true))
+        }
+        return res
+            .status(200)
+            .json(new successResponse(200,"Successfully deleted sub category ",deleteSingleSubCategory,false))
+    } catch (error) {
+        return res.status(500)
+        .json(new errorResponse(500,"Error, from deleted sub category failed!",null,error))
+    }
+}
+
+
+module.exports = {creatSubCategory,getAllSubCategory,getSingleSubCategory,updateSubCategory,deleteSubCategory}

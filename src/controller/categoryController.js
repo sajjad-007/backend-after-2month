@@ -122,8 +122,8 @@ const deleteCategory =async(req,res) =>{
         const deleteSingleCategory = await categoryModel.findByIdAndDelete(id);
         if (!deleteSingleCategory) {
             return res
-            .status(200)
-            .json(new successResponse(200,"Couldn't find anything",null,false))
+            .status(401)
+            .json(new successResponse(401,"Couldn't find anything",null,false))
         }
         
         

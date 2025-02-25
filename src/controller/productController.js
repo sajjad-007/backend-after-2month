@@ -121,12 +121,12 @@ const updateProductImage = async(req,res) =>{
         if(!imginfo){
             return res
             .status(401)
-            .json(new errorResponse(401,"ImgInfo is not found",null,error))
+            .json(new errorResponse(401,"ImgInfo is not found",null,true))
         }
         if(!req.files){
             return res
             .status(401)
-            .json(new errorResponse(401,"Multer not working",null,error))
+            .json(new errorResponse(401,"Multer not working",null,true))
         }
 
         //delete old img from cloudinary
@@ -137,7 +137,6 @@ const updateProductImage = async(req,res) =>{
             const cloudinaryFileDel = await deletFileCloudinary(cloudinaryPath)
             
         }
-
         //upload file on cloudinary
 
         const newImgArray = []

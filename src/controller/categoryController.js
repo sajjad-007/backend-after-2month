@@ -1,6 +1,7 @@
 const {categoryModel} = require("../model/categorySchema")
 const {successResponse} = require("../utilitis/successResponse")
 const {errorResponse} = require("../utilitis/errorResponse")
+const {subCategoryModel} = require("../model/subCategorySchema")
 const {uploadFileCloudinary,deletFileCloudinary} = require("../utilitis/cloudinary")
 
 //create categoroy
@@ -31,7 +32,7 @@ const category = async(req,res) =>{
 const getCategory = async(req,res)=>{
     try {
 
-        const findAllCategory = await categoryModel.find()
+        const findAllCategory = await categoryModel.find({}).populate('subCategory')
         if(!findAllCategory){
             return res.status(404)
             .json(new errorResponse(404,"Couldn't find anything",null,error))
@@ -94,20 +95,28 @@ const updateCategory =async(req,res) =>{
 //get a single category
 const getSingleCategory =async(req,res) =>{
     try {
-        
-        const { id } = req.params;
-        
-        const findSingleCategory = await categoryModel.findById(id);
-        if (!findSingleCategory) {
-            return res
-            .status(200)
-            .json(new successResponse(200,"Couldn't find anything",null,false))
-        }
-        
-        
+      const { id } = req.params;
+      const findSingleCategory = await categoryModel
+        .findById(id)
+        .populate("subCategory");
+      if (!findSingleCategory) {
         return res
+          .status(200)
+          .json(
+            new successResponse(200, "Couldn't find anything", null, false)
+          );
+      }
+
+      return res
         .status(200)
-        .json(new successResponse(200,"Successfully updated my category",findSingleCategory,false))
+        .json(
+          new successResponse(
+            200,
+            "Successfully updated my category",
+            findSingleCategory,
+            false
+          )
+        );
     } catch (error) {
         return res.status(500)
         .json(new errorResponse(500,"Update Category Unsuccessful",null,error))

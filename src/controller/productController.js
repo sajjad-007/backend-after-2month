@@ -49,10 +49,9 @@ const createProduct = async(req,res) =>{
     } catch (error) {
         return res
             .status(500)
-            .json(new errorResponse(500,"Error,From create product failed!",null,false))
+            .json(new errorResponse(500,"Error,From create product failed!",error,false))
     }
 }
-
 //get all product
 const getAllProduct = async(req,res) =>{
     try {
@@ -68,7 +67,7 @@ const getAllProduct = async(req,res) =>{
     } catch (error) {
         return res
             .status(500)
-            .json(new errorResponse(500,"Error,from get all product",null,false))
+            .json(new errorResponse(500,"Error,from get all product",error,false))
     }
 }
 //get a single product 
@@ -88,7 +87,7 @@ const getSingleProduct = async(req,res) =>{
     } catch (error) {
         return res
         .status(200)
-        .json(new successResponse(200,"Successfully created product",error,true))
+        .json(new successResponse(200,"Error from get single product",error,true))
     }
 }
 //update product information 
@@ -110,7 +109,7 @@ const updateProductInfo = async(req,res) =>{
     } catch (error) {
         return res
         .status(200)
-        .json(new successResponse(200,"Successfully created product",error,true))
+        .json(new successResponse(200,"Product created unsuccessfull",error,true))
     }
 }
 //update prouduct image 
@@ -176,7 +175,7 @@ const updateProductImage = async(req,res) =>{
     } catch (error) {
         return res
             .status(500)
-            .json(new errorResponse(500,"Error,From Product Image update",null,error))
+            .json(new errorResponse(500,"Error,From Product Image update",error,true))
     }
 }
 

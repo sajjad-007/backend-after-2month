@@ -7,15 +7,17 @@ const orderSchema = new Schema(
       type: Types.ObjectId,
       ref: "user",
     },
-    product: {
-      type: Types.ObjectId,
-      ref: "product",
-    },
+    cart: [
+      {
+        type: Types.ObjectId,
+        ref: "cart",
+        required: true,
+      },
+    ],
     customerInfo: {
       firstName: {
         type: String,
         trim: true,
-        required: true,
       },
       companyName: {
         type: String,
@@ -37,7 +39,7 @@ const orderSchema = new Schema(
         required: true,
       },
       phoneNumber: {
-        type: Numebr,
+        type: Number,
         trim: true,
         required: true,
       },
@@ -63,7 +65,7 @@ const orderSchema = new Schema(
         type: String,
       },
       tran_id: {
-        type: true,
+        type: String,
       },
     },
     status: {
@@ -89,4 +91,4 @@ const orderSchema = new Schema(
 
 const orderModel = mongoose.model("order", orderSchema);
 
-module.exports = {orderModel}
+module.exports = { orderModel };
